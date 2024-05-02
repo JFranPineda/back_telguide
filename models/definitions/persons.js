@@ -8,6 +8,7 @@ const typePerson = gql`
     name: String!
     phone: String
     address: Address!
+    friendOf: [User!]
     id: ID!
   }
 

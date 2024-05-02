@@ -15,8 +15,10 @@ const resolversPerson = {
       const { phone = null } = args
       return await PersonModel.getAll({ phone })
     },
-    findPerson: async (root, args) =>
-      await PersonModel.getByName({ name: args.name})
+    findPerson: async (root, args) => {
+      const name = args.name
+      return await PersonModel.getByName({ name })
+    }
   },
   Person: {
     address: ({ street, city }) => {
@@ -24,7 +26,7 @@ const resolversPerson = {
         street,
         city,
       }
-    },
+    }
   },
   Mutation: {
     addPerson: async (root, args, { currentUser }) => {
@@ -86,4 +88,4 @@ const resolversPerson = {
   },
 }
 
-module.exports = { resolversPerson };
+module.exports = { resolversPerson }

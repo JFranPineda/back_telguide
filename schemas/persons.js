@@ -21,6 +21,12 @@ const personSchema = new mongoose.Schema({
     required: [true, 'City is required.'],
     minlength: 3
   },
+  friendOf: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'User'
+    }
+  ],
 }, { collection: 'persons' });
 
 module.exports = client.model('Person', personSchema)
