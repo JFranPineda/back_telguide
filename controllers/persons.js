@@ -1,6 +1,7 @@
-const { v1: uuid } = require('uuid')
 const { GraphQLError } = require('graphql')
 const { PersonModel } = require('../models/database/persons.js')
+const { PubSub } = require('graphql-subscriptions')
+const pubsub = new PubSub()
 
 const resolversPerson = {
   Query: {
@@ -45,7 +46,9 @@ const resolversPerson = {
       }
       currentUser.friends = [...currentUser.friends, person._id]
       await currentUser.save()
-      return { ...person, id: person._id }
+      const personObj = { ...person, id: person._id }
+      pubsub.publish('PERSON_ADDED', { personAdded: personObj })
+      return personObj
     },
     editNumber: async (root, args) => {
       const updatedPerson = await PersonModel.update({ name: args.name, input: args})
@@ -75,7 +78,12 @@ const resolversPerson = {
       await currentUser.save()
       return currentUser
     },
-  }
+  },
+  Subscription: {
+    personAdded: {
+      subscribe: () => pubsub.asyncIterator('PERSON_ADDED')
+    },
+  },
 }
 
 module.exports = { resolversPerson };
